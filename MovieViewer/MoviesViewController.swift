@@ -15,7 +15,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     @IBOutlet weak var tableView: UITableView!
     
     var movies: [NSDictionary]?
-    
+    var endpoint: String!
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -28,7 +28,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         // Do any additional setup after loading the view.
         
         let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
-        let url = NSURL(string: "https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")
+        let url = NSURL(string: "https://api.themoviedb.org/3/movie/\(endpoint)?api_key=\(apiKey)")
         let request = NSURLRequest(
             URL: url!,
             cachePolicy: NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData,
@@ -118,38 +118,44 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         let cell = tableView.dequeueReusableCellWithIdentifier("MovieCell", forIndexPath: indexPath) as! MovieCell
         
         let movie = movies![indexPath.row]
-        let title = movie["title"] as! String
-        let overview = movie["overview"] as! String
+        let title = movie["title"] as? String
+        let overview = movie["overview"] as? String
         
-        let posterPath = movie["poster_path"] as! String
+        
         
         let baseUrl = "http://image.tmdb.org/t/p/w500"
+        if let posterPath = movie["poster_path"] as? String{
+            let imageUrl = NSURL(string: baseUrl + posterPath)
+            let imageRequest = NSURLRequest(URL: imageUrl!)
+            
+            
+            cell.posterView.setImageWithURLRequest(
+                imageRequest,
+                placeholderImage: nil,
+                success: { (imageRequest, imageResponse, image) -> Void in
+                    
+                    // imageResponse will be nil if the image is cached
+                    if imageResponse != nil {
+                        print("Image was NOT cached, fade in image")
+                        cell.posterView.alpha = 0.0
+                        cell.posterView.image = image
+                        UIView.animateWithDuration(0.3, animations: { () -> Void in
+                            cell.posterView.alpha = 1.0
+                        })
+                    } else {
+                        print("Image was cached so just update the image")
+                        cell.posterView.image = image
+                    }
+                },
+                failure: { (imageRequest, imageResponse, error) -> Void in
+                    // do something for the failure condition
+            })
+
+            
+        }
         
-        let imageUrl = baseUrl + posterPath
+       
         
-        let imageRequest = NSURLRequest(URL: NSURL(string: imageUrl)!)
-        
-        cell.posterView.setImageWithURLRequest(
-            imageRequest,
-            placeholderImage: nil,
-            success: { (imageRequest, imageResponse, image) -> Void in
-                
-                // imageResponse will be nil if the image is cached
-                if imageResponse != nil {
-                    print("Image was NOT cached, fade in image")
-                    cell.posterView.alpha = 0.0
-                    cell.posterView.image = image
-                    UIView.animateWithDuration(0.3, animations: { () -> Void in
-                        cell.posterView.alpha = 1.0
-                    })
-                } else {
-                    print("Image was cached so just update the image")
-                    cell.posterView.image = image
-                }
-            },
-            failure: { (imageRequest, imageResponse, error) -> Void in
-                // do something for the failure condition
-        })
         
         
         
@@ -161,14 +167,24 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         return cell
     }
 
-    /*
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        let cell = sender as! UITableViewCell
+        let indexPath = tableView.indexPathForCell(cell)
+        let movie  = movies![indexPath!.row]
+        
+        let detailViewController = segue.destinationViewController as! DetailViewController
+        detailViewController.movie = movie
+        
+        
+        print("prepare for segue called")
+        
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+        
     }
-    */
+
 
 }
