@@ -12,10 +12,12 @@ import MBProgressHUD
 
 class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
+    @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
     
     var movies: [NSDictionary]?
     var endpoint: String!
+  
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -62,6 +64,48 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         
     }
     
+    
+    /*
+    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+        filteredData = searchText.isEmpty ? data : data.filter({(dataString: String) -> Bool in
+            return dataString.rangeOfString(searchText, options: .CaseInsensitiveSearch) != nil
+        })
+        
+    }
+    
+    // This method updates filteredData based on the text in the Search Box
+    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+        // When there is no text, filteredData is the same as the original data
+        if searchText.isEmpty {
+            filteredData = data
+        } else {
+            // The user has entered text into the search box
+            // Use the filter method to iterate over all items in the data array
+            // For each item, return true if the item should be included and false if the
+            // item should NOT be included
+            filteredData = data.filter({(dataItem: String) -> Bool in
+                // If dataItem matches the searchText, return true to include it
+                if dataItem.rangeOfString(searchText, options: .CaseInsensitiveSearch) != nil {
+                    return true
+                } else {
+                    return false
+                }
+            })
+        }
+        tableView.reloadData()
+    }
+    
+    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+        searchBar.showsCancelButton = false
+        searchBar.text = ""
+        searchBar.resignFirstResponder()
+    }
+    
+    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+        self.searchBar.showsCancelButton = true
+    }
+    
+    */
     func refreshControlAction(refreshControl: UIRefreshControl) {
                 // Tell the refreshControl to stop spinning
                 tableView.dataSource = self
@@ -99,6 +143,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         task.resume()
     }
     
+   
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -163,7 +208,23 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         cell.overviewLabel.text = overview
         //cell.posterView.setImageWithURL(imageUrl!)
         
+        //cell.textLabel?.text = filteredData[indexPath.row] //sets the text for the search bar
+        
         print("row\(indexPath.row)")
+        
+        // No color when the user selects cell
+        
+        cell.selectionStyle = .None
+        cell.accessoryType = .None
+        
+        /*y
+        // Use a red color when the user selects the cell
+        let backgroundView = UIView()
+    
+        backgroundView.backgroundColor = UIColor.blueColor()
+        cell.selectedBackgroundView = backgroundView
+        */
+        
         return cell
     }
 

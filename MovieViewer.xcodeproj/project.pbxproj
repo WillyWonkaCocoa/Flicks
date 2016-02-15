@@ -80,7 +80,6 @@
 			isa = PBXGroup;
 			children = (
 				60F67E5D1C61793000FA9FA7 /* MovieCell.swift */,
-				60D58E931C69891400278ABA /* DetailViewController.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -89,6 +88,7 @@
 			isa = PBXGroup;
 			children = (
 				60F67E5A1C616E7800FA9FA7 /* MoviesViewController.swift */,
+				60D58E931C69891400278ABA /* DetailViewController.swift */,
 			);
 			name = "view controllers";
 			sourceTree = "<group>";
